@@ -1,0 +1,11 @@
+<% if @error %>
+  Error: <%= @error %>
+<% else %>
+  You have successfully linked your Dropbox account.
+  <br><br>
+  Your secret extension URL is:
+  <br><br>
+  <%= @secret_url %>
+  <br><br>
+  After noting this URL, you may close this page.
+<% end %>
