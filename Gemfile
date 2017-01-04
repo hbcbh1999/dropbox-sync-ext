@@ -13,8 +13,6 @@ gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'
 
-gem 'carrierwave', github: 'carrierwaveuploader/carrierwave'
-
 gem 'rack-cors', :require => 'rack/cors'
 
 gem 'dropbox-sdk-v2'

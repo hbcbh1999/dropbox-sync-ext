@@ -39,7 +39,6 @@ class ExtensionsController < ApplicationController
     items = params[:items]
     dropbox = Dropbox::Client.new(@user.dropbox_token)
     items.each do |item|
-      puts item.inspect
       dropbox.upload("/#{item[:uuid]}.txt", "#{item[:content][:title]}\n\n#{item[:content][:text]}", {:mode => "overwrite"})
     end
 
@@ -62,7 +61,6 @@ class ExtensionsController < ApplicationController
     resp = HTTP.headers(content_type: 'application/json').post(url, :params => request_params)
 
     if resp.code != 200
-      puts "Error"
       @error = "Unable to authenticate. Please try again."
     else
       data = JSON.parse(resp.to_s)
