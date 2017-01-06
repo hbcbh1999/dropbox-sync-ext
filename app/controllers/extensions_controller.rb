@@ -15,35 +15,46 @@ class ExtensionsController < ApplicationController
     actions = [
       {
         :label => "Auto-push changes",
-        :desc => "Pushes note changes to Dropbox folder.",
+        :desc => "Pushes item changes to Dropbox folder.",
         :url => "http://localhost:3002/ext/#{@user.uuid}/push",
-        :type => "watch:post:7",
-        :structures => [
-          {
-            :type => "Note",
-            :mode => "read",
-            :decrypted => true
-          }
-        ]
+        :verb => "post",
+        :repeat_mode => "watch",
+        :repeat_timeout => 7,
+        :context => "global",
+        :content_types => ["*"],
+        :permissions => "read",
+        :accepts_decrypted => true,
+        :accepts_encrypted => false
       },
       {
         :label => "Perform initial sync",
-        :desc => "Syncs all your current notes. This can take several minutes, depending on how many notes you have.",
+        :desc => "Syncs all your current items. This can take several minutes, depending on how many items you have.",
         :url => "http://localhost:3002/ext/#{@user.uuid}/initial_sync",
-        :type => "all:post",
-        :structures => [
-          {
-            :type => "Note",
-            :mode => "read",
-            :decrypted => true
-          }
-        ]
+        :verb => "post",
+        :context => "global",
+        :content_types => ["*"],
+        :all => true,
+        :permissions => "read",
+        :accepts_decrypted => true,
+        :accepts_encrypted => true
+      },
+      {
+        :label => "Save to Dropbox",
+        :desc => "Syncs this item to Dropbox.",
+        :url => "http://localhost:3002/ext/#{@user.uuid}/sync_one",
+        :verb => "post",
+        :context => "Item",
+        :content_types => ["*"],
+        :permissions => "read",
+        :accepts_decrypted => true,
+        :accepts_encrypted => true
       },
       {
         :label => "Download import file",
         :desc => "Downloads import file in standard format.",
         :url => "http://localhost:3002/ext/#{@user.uuid}/download",
-        :type => "show"
+        :context => "global",
+        :verb => "show"
       }
     ]
     render :json => {:name => name, :supported_types => supported_types, :actions => actions}
@@ -73,6 +84,7 @@ class ExtensionsController < ApplicationController
     items.each do |item|
       existing = contents.find { |e| e["uuid"] == item[:uuid]  }
       if existing
+        existing.clear
         existing.merge!(item.to_unsafe_h)
       else
         contents.push(item.to_unsafe_h)
